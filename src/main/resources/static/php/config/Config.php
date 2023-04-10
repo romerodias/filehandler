@@ -1,0 +1,6 @@
+<?php 
+/**
+* @copyright (c) 2014, rdtecnologia.com.br  
+* @license MIT Licence 
+*/
+ class Config { public static $config = null; public static function getFile() { if (! self::$config) if (file_exists("../configs/application.ini")) { self::$config = parse_ini_file("../configs/application.ini", true); } else if (file_exists("configs/application.ini")) { self::$config = parse_ini_file("configs/application.ini", true); } return self::$config; } public static function getValue($sessionName, $configuration) { $value = null; $value = self::getSession($sessionName, $configuration); if (! $value) { $config = self::getFile(); $value = $config[$sessionName][$configuration]; self::setSession($sessionName, $configuration, $value); } return $value; } private static function setKey($sessionName, $configuration) { return sprintf('%s_%s', $sessionName, $configuration); } private static function setSession($sessionName, $configuration, $value) { $_SESSION[self::setKey($sessionName, $configuration)] = $value; } private static function getSession($sessionName, $configuration) { return $_SESSION[self::setKey($sessionName, $configuration)]; } }

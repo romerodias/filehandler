@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>RD Lock - Sistema de Bloqueio de Documentos</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<style>
+  		body {
+  			background-image: url(/resources/images/desktop.jpg)
+  		}
+  		#logo-brand {
+  			background-image: url(/resources/images/logo.jpg)
+  		}
+  	</style>
+
+	<link rel="stylesheet" th:href="@{/resources/css/index.css}" />
+</head>
+
+<body>
+	<!-- style="margin: 0 auto; width:40%" -->
+	<div  class="well col-md-4 col-md-offset-4" style="margin-top: 15%">
+	<!--
+		<img id="logo-brand" class="center-block" width="335" alt=" " />
+	-->
+
+		<form th:action="@{/login}" action="/login" method="POST" class="form-signin">
+			<table>
+				<tbody>
+				<tr>
+<!--					<td style="padding:8px">-->
+<!--						<img th:src="@{/images/logo-prevent.jpg}"  width="100" alt=" " />-->
+<!--					</td>-->
+					<td style="padding-top:9px">
+						<h5 class="form-signin-heading"><b>RD Lock</b> - Sistema de Bloqueio de Documentos</h5>
+					</td>
+				</tr>
+				</tbody></table>
+
+			<input type="text" id="username" name="username"  th:placeholder="Usuário"
+				class="form-control"  style="margin-top:15px" /> <br/>
+			
+			<input type="password"  th:placeholder="Password"
+				id="password" name="password" class="form-control" /> <br />
+				
+			<div align="center" th:if="${param.error}">
+				<p style="font-size: 20; color: #FF1C19;">Usuário ou senha inválidos, tente novamente.</p>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit" th:text="Login"></button>
+		</form>
+	</div>
+</body>
+</html>

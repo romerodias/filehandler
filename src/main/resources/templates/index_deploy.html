@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>RD Lock - Sistema de Bloqueio de Documentos</title>
+	<link rel="stylesheet" th:href="@{/extjs/resources/css/ext-all-gray.css}" />
+	<link rel="stylesheet" th:href="@{/extjs/examples/shared/icons/silk.css}" />
+	<link rel="stylesheet" th:href="@{/resources/icons/silk.css}" />
+
+	<link rel="stylesheet" th:href="@{/extjs/examples/ux/grid/css/GridFilters.css}" />
+	<link rel="stylesheet" th:href="@{/extjs/examples/ux/grid/css/RangeMenu.css}" />
+	<link rel="stylesheet" th:href="@{/extjs/examples/ux/css/LiveSearchGridPanel.css}" />
+	<link rel="stylesheet" th:href="@{/extjs/examples/ux/statusbar/css/statusbar.css}" />
+
+<!--	<link rel="stylesheet" th:href="@{/extjs/examples/ux/css/CheckHeader.css}" />-->
+	<link rel="stylesheet" th:href="@{/resources/css/index.css}" />
+<!--	<link rel="stylesheet" th:href="@{/css/portal.css}" />-->
+</head>
+<body>
+
+<!-- Load Screen -->
+<div id="loading-mask">&#160;</div>
+<div id="loading">
+	<div class="loading-indicator"></div>
+	<div class="loading-status">
+		<img th:src="@{/resources/images/loading-gear.gif}" />
+		<p id='loading-msg'>&nbsp;&nbsp;Carregando estilos e imagens...</p>
+	</div>
+</div>
+
+<script type="text/javascript">document.getElementById('loading-msg').innerHTML = '&nbsp;&nbsp;Inicializando...';
+	</script>
+<!-- <script type="text/javascript" src="extjs/ext-dev.js"></script> -->
+<!-- <script type="text/javascript" src="app.js"></script> -->
+<!-- <script type="text/javascript" src="extjs/locale/ext-lang-pt_BR.js"></script> -->
+<script th:src="@{/extjs/ext.js}"></script>
+<script th:src="@{/extjs/locale/ext-lang-pt_BR.js}"></script>
+<script th:src="@{/app.js}"></script>
+<!-- Splash -->
+<script type="text/javascript">
+		Ext.onReady(function() {
+			Ext.QuickTips.init();
+			setTimeout(function() {
+				Ext.get('loading').remove();
+				Ext.get('loading-mask').fadeOut({
+					remove : true
+				});
+			}, 250);
+		});
+	</script>
+</body>
+</html>

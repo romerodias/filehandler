@@ -1,0 +1,222 @@
+body {
+	background:url(../images/desktop.jpg);
+}
+
+/*
+ * Toolbar in IE7
+.x-nlg .x-toolbar-default {
+    background-image: url(../images/blank.png) !important;
+}
+*/
+.combo-result-item {
+	border:1px solid white;	
+}
+.combo-item {
+	font-weight:bold;
+	background-color:#fff99;	
+}
+.combo-subitem {
+	font-size:11px;
+	color : #666666		
+}
+		
+#loading-mask {
+  position: absolute;
+  left:     0;
+  top:      0;
+  width:    100%;
+  height:   99%;
+  z-index:  20000;
+  background-color: white;
+  border: 1px solid white;
+  margin:auto;	
+}
+
+#loading {
+  position: absolute;
+  left:     40%;
+  top:      40%;
+  padding:  5px;
+  z-index:  20001;
+  height:   auto;
+  margin:   auto;
+ /* border:1px solid gray;*/
+  width: 200px;
+  display: table;
+}
+
+#loading .loading-indicator {
+ /* background: url(resources/images/loading.gif) no-repeat; */
+  color:      #555;
+  font:       bold 13px tahoma,arial,helvetica;
+  padding:    8px 8px;
+  margin-top: 10px;
+  text-align: center;
+  height:     auto;  float:left
+
+}
+#loading .loading-status {
+  color:      #555;
+  font:       13px tahoma,arial,helvetica;
+  padding:    8px 42px;
+  margin:     0;
+  text-align: center;
+  height:     auto;
+}
+.loading-status img {
+	display: block;
+}
+#loading-msg {
+	width: 400px;
+	/*border:1px solid red;*/
+	float:left;
+	text-align: left;
+}
+
+#header {
+    background: #7F99BE url(../resources/images/desktop.jpg) repeat-x center;
+     /* CSS3 Background Gradient */
+    background-image: -moz-linear-gradient(top, #cacaca, #848484);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#cacaca), to(#848484));
+	background-image: -ms-linear-gradient(bottom, #848484  0%, #cacaca 100%);
+
+}
+	
+#header h1 {
+ 	font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
+    color: #262626;
+    padding: 9px 8px 12px 45px;
+    margin-left: 5px;
+    text-decoration: none;
+    text-transform: capitalize;
+     
+    /* CSS3 Text Shadow */  
+    text-shadow: 0px 1px 1px #eee;
+
+    background: url(/resources/images/logo.png) left no-repeat;
+}
+
+.tip-target {
+    width: 100px;
+    text-align:center;
+    padding: 5px 0;
+    border:1px dotted #99bbe8;
+    background:#dfe8f6;
+    color: #15428b;
+    cursor:default;
+    margin:10px;
+    font:bold 11px tahoma,arial,sans-serif;
+    float:left;
+}
+        
+	
+
+        /* style rows on mouseover */
+        .x-grid-row-over .x-grid-cell-inner {
+            font-weight: bold;
+        }
+        /* shared styles for the ActionColumn icons */
+        .x-action-col-cell img {
+            height: 16px;
+            width: 16px;
+            cursor: pointer;
+        }
+        /* custom icon for the "buy" ActionColumn icon */
+        .x-action-col-cell img.buy-col {
+            background-image: url(../shared/icons/fam/accept.gif);
+        }
+        /* custom icon for the "alert" ActionColumn icon */
+        .x-action-col-cell img.alert-col {
+            background-image: url(../shared/icons/fam/error.gif);
+        }
+        
+        
+.x-scroller-ct { 
+    overflow:hidden; 
+    position:absolute; 
+    margin:0; 
+    padding:0; 
+    border:none; 
+    left:0px; 
+    top:0px; 
+    box-sizing:content-box !important; 
+    -ms-box-sizing:content-box !important; 
+    -moz-box-sizing:content-box !important; 
+    -webkit-box-sizing:content-box !important 
+}  
+
+.x-vertical-scroller-present .x-grid-body {
+    border-right-width:0px
+}
+
+.x-scroller {
+    overflow:hidden
+}
+
+.x-scroller-vertical {
+    border:1px solid #99bce8;
+    border-top-color:#c5c5c5
+}
+
+.x-scroller-horizontal {
+    border:1px solid #99bce8
+}
+
+.x-vertical-scroller-present .x-scroller-horizontal {
+    border-right-width:0px
+}
+
+.x-scroller-vertical .x-scroller-ct {
+    overflow-y:scroll
+}
+
+.x-scroller-horizontal .x-scroller-ct {
+    overflow-x:scroll
+}
+
+.task .x-grid-cell-inner {
+    padding-left: 15px;
+}
+.x-grid-row-summary .x-grid-cell-inner {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+/*.x-column-header-inner { font-weight:bold !important; }*/
+
+
+.x-fieldset-header-text { font-size: 13px }
+
+.icon-grid { background: url(../shared/icons/fam/grid.png) no-repeat 0 -1px; }
+
+.red-row { 	color:red;	}
+
+.nao-solicitado .x-grid-cell {
+    background-color: red;
+    color: white;
+}
+
+.yellow-row { color:orange;	}
+
+	/* GridSummary */
+    .x-grid-row-summary {
+        color:#333;
+        background: #f1f2f4;
+    }
+    .x-grid-row-summary  .x-grid-cell-inner {
+        font-weight: bold;
+        font-size: 11px;
+        padding-bottom: 4px;
+    }
+    .x-grid-hide-summary .x-grid-row-summary {
+        display:none;
+    }
+    .x-grid-row .x-grid-cell-cost {
+        background-color:#f1f2f4;
+    }
+    .x-grid-row-summary .x-grid-cell-cost {
+        background-color:#e1e2e4;
+    }
