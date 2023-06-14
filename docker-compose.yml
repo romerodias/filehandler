@@ -23,82 +23,83 @@ services:
 #      - rdged-db
 #
 #
-#  rdged-db:
-#    image: mysql/mysql-server:5.6.43
-#    hostname: rdged-db
-#    environment:
-#      MYSQL_DATABASE: rdged
-#      MYSQL_USER: rdtecnologia
-#      MYSQL_PASSWORD: sa123tecnol
-#      MYSQL_ROOT_PASSWORD: sa123tecnol
-##    ports:
-##      - "3306:3306"
-#
-#  rdged-phpmyadmin:
-#    image: phpmyadmin/phpmyadmin
-#    hostname: phpmyadmin-rdlock
-#    links:
-#      - rdged-db
-#    ports:
-#      - 8188:80
-#    environment:
-#      PMA_HOST: rdged-db
-#      PMA_PORT: 3306
-#      MYSQL_USER: rdtecnologia
-#      MYSQL_PASSWORD: sa123tecnol
-#      MYSQL_ROOT_PASSWORD: sa123tecnol
-#    depends_on:
-#      - rdged-db
-
-  openldap:
-    image: osixia/openldap:1.2.3
-    container_name: openldap
+  rdged-db:
+    image: mysql/mysql-server:5.6.43
+    hostname: rdged-db
     environment:
-      LDAP_LOG_LEVEL: "256"
-      LDAP_ORGANISATION: "Example Inc."
-      LDAP_DOMAIN: "example.org"
-      LDAP_BASE_DN: ""
-      LDAP_ADMIN_PASSWORD: "admin"
-      LDAP_CONFIG_PASSWORD: "config"
-      LDAP_READONLY_USER: "false"
-      LDAP_READONLY_USER_USERNAME: "readonly"
-      LDAP_READONLY_USER_PASSWORD: "readonly"
-      LDAP_RFC2307BIS_SCHEMA: "false"
-      LDAP_BACKEND: "mdb"
-      LDAP_TLS: "true"
-      LDAP_TLS_CRT_FILENAME: "ldap.crt"
-      LDAP_TLS_KEY_FILENAME: "ldap.key"
-      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
-      LDAP_TLS_ENFORCE: "false"
-      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
-      LDAP_TLS_PROTOCOL_MIN: "3.1"
-      LDAP_TLS_VERIFY_CLIENT: "demand"
-      LDAP_REPLICATION: "false"
-      #LDAP_REPLICATION_CONFIG_SYNCPROV: "binddn="cn=admin,cn=config" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase="cn=config" type=refreshAndPersist retry="60 +" timeout=1 starttls=critical"
-      #LDAP_REPLICATION_DB_SYNCPROV: "binddn="cn=admin,$LDAP_BASE_DN" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase="$LDAP_BASE_DN" type=refreshAndPersist interval=00:00:00:10 retry="60 +" timeout=1 starttls=critical"
-      #docker-compose.ymlLDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.example.org','ldap://ldap2.example.org']"
-      KEEP_EXISTING_CONFIG: "false"
-      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
-      LDAP_SSL_HELPER_PREFIX: "ldap"
-    tty: true
-    stdin_open: true
-    volumes:
-      - /var/lib/ldap
-      - /etc/ldap/slapd.d
-      - /container/service/slapd/assets/certs/
+      MYSQL_DATABASE: rdged
+      MYSQL_USER: rdtecnologia
+      MYSQL_PASSWORD: sa123tecnol
+      MYSQL_ROOT_PASSWORD: sa123tecnol
     ports:
-      - "389:389"
-      - "636:636"
-    domainname: "example.org" # important: same as hostname
-    hostname: "example.org"
+      - "3307:3306"
 
-  phpldapadmin:
-    image: osixia/phpldapadmin:latest
-    container_name: phpldapadmin
-    environment:
-      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
-      PHPLDAPADMIN_HTTPS: "false"
+  rdged-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin-rdlock
+    links:
+      - rdged-db
     ports:
-      - "8000:80"
+      - 8188:80
+    environment:
+      PMA_HOST: rdged-db
+      PMA_PORT: 3306
+      MYSQL_USER: rdtecnologia
+      MYSQL_PASSWORD: sa123tecnol
+      MYSQL_ROOT_PASSWORD: sa123tecnol
     depends_on:
-      - openldap
+      - rdged-db
+
+#  openldap:
+#    image: osixia/openldap:1.2.3
+#    container_name: openldap
+#    environment:
+#      LDAP_LOG_LEVEL: "256"
+#      LDAP_ORGANISATION: "Example Inc."
+#      LDAP_DOMAIN: "example.org"
+#      LDAP_BASE_DN: ""
+#      LDAP_ADMIN_PASSWORD: "admin"
+#      LDAP_CONFIG_PASSWORD: "config"
+#      LDAP_READONLY_USER: "false"
+#      LDAP_READONLY_USER_USERNAME: "readonly"
+#      LDAP_READONLY_USER_PASSWORD: "readonly"
+#      LDAP_RFC2307BIS_SCHEMA: "false"
+#      LDAP_BACKEND: "mdb"
+#      LDAP_TLS: "true"
+#      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+#      LDAP_TLS_KEY_FILENAME: "ldap.key"
+#      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+#      LDAP_TLS_ENFORCE: "false"
+#      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
+#      LDAP_TLS_PROTOCOL_MIN: "3.1"
+#      LDAP_TLS_VERIFY_CLIENT: "demand"
+#      LDAP_REPLICATION: "false"
+#      #LDAP_REPLICATION_CONFIG_SYNCPROV: "binddn="cn=admin,cn=config" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase="cn=config" type=refreshAndPersist retry="60 +" timeout=1 starttls=critical"
+#      #LDAP_REPLICATION_DB_SYNCPROV: "binddn="cn=admin,$LDAP_BASE_DN" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase="$LDAP_BASE_DN" type=refreshAndPersist interval=00:00:00:10 retry="60 +" timeout=1 starttls=critical"
+#      #docker-compose.ymlLDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.example.org','ldap://ldap2.example.org']"
+#      KEEP_EXISTING_CONFIG: "false"
+#      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+#      LDAP_SSL_HELPER_PREFIX: "ldap"
+#      LDAP_OPENLDAP_GID: 1234
+#    tty: true
+#    stdin_open: true
+#    volumes:
+#      - /var/lib/ldap
+#      - /etc/ldap/slapd.d
+#      - /container/service/slapd/assets/certs/
+#    ports:
+#      - "389:389"
+#      - "636:636"
+#    domainname: "example.org" # important: same as hostname
+#    hostname: "example.org"
+#
+#  phpldapadmin:
+#    image: osixia/phpldapadmin:latest
+#    container_name: phpldapadmin
+#    environment:
+#      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+#      PHPLDAPADMIN_HTTPS: "false"
+#    ports:
+#      - "8000:80"
+#    depends_on:
+#      - openldap

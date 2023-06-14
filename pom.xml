@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>br.com.rdtecnologia</groupId>
 	<artifactId>filehandler</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 	<name>filehandler</name>
 	<description>Microserviço para bloqueio e desbloqueio de documentos</description>
 
@@ -83,17 +83,25 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.9</version>
+			<version>8.0.32</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.26</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>31.1-jre</version>
 		</dependency>
 
 	</dependencies>

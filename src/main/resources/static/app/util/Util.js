@@ -65,7 +65,7 @@ Ext.define('Control.util.Util', {
 			//console.log(record);
 			var icon = record.data.extension;
 			//console.log(icon);
-			return Ext.String.format('<img src="resources/icons/{0}.gif" alt="{1}"/>',icon,icon) + '&nbsp;&nbsp;' + v;
+			return Ext.String.format('<img src="resources/icons/{0}.gif" alt=""/>',icon) + '&nbsp;&nbsp;' + v;
 		},
 		
 		

@@ -14,6 +14,9 @@ public class IndexController {
   @RequestMapping(value={"/login"}, method = RequestMethod.GET)
   public ModelAndView login() { return renderModelAndView("login"); }
 
+  @RequestMapping(value={"/error"}, method = RequestMethod.GET)
+  public ModelAndView error() { return renderModelAndView("login"); }
+
   private ModelAndView renderModelAndView(String viewName) {
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName(viewName);

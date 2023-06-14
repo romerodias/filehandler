@@ -9,12 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +33,7 @@ public class FileHandlerController {
     @PostMapping("/block")
     public void block(
         @RequestParam("path") String Path,
-        @RequestParam("files") String files)throws FileNotFoundException, UnsupportedEncodingException {
+        @RequestParam("files") String files) throws IOException {
 
         List<String> filesToBlock = Arrays.asList(files.split(","));
 
@@ -45,7 +48,7 @@ public class FileHandlerController {
     @PostMapping("/unblock")
     public void unblock(
         @RequestParam("path") String Path,
-        @RequestParam("files") String files)throws FileNotFoundException, UnsupportedEncodingException {
+        @RequestParam("files") String files) throws IOException {
 
         List<String> filesToBlock = Arrays.asList(files.split(","));
 
@@ -68,8 +71,10 @@ public class FileHandlerController {
 
         log.info("Start to find directories for node: {}", node);
 
-        return new JsonReturnTree<>(
-            Arrays.stream(new File(node).listFiles(File::isDirectory))
+        //
+
+
+           List<DirectoryResponse> list =  Arrays.stream(new File(node).listFiles(File::isDirectory))
             .map(d ->
                 DirectoryResponse
                     .builder()
@@ -80,8 +85,15 @@ public class FileHandlerController {
                     .iconCls("")
                     .build()
                 )
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
+           list.sort(new Comparator<DirectoryResponse>() {
+               @Override
+               public int compare(DirectoryResponse o1, DirectoryResponse o2) {
+                   return o1.getText().toUpperCase().compareTo(o2.getText().toUpperCase());
+               }});
+
+        return new JsonReturnTree<>(list);
     }
     @GetMapping("/list-files")
     public JsonReturnTree<FileResponse> listFiles(
@@ -106,11 +118,24 @@ public class FileHandlerController {
                     .iconCls("")
                     .canExecute(d.canExecute())
                     .canRead(d.canRead())
-                    .canWrite(d.canWrite())
+                    .canWrite(canWrite(d.toPath()))
                     .extension(Files.getFileExtension(d.getName()))
                     .build()
                 )
+                    .sorted(new Comparator<FileResponse>() {
+                        @Override
+                        public int compare(FileResponse o1, FileResponse o2) {
+                            return o1.getText().toUpperCase().compareTo(o2.getText().toUpperCase());
+                        }})
                 .collect(Collectors.toList()));
 
+    }
+
+    public Boolean canWrite(Path path) {
+        try {
+            return java.nio.file.Files.getPosixFilePermissions(path).contains(PosixFilePermission.OTHERS_WRITE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

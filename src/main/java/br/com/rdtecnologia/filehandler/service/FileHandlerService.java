@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
@@ -22,7 +23,7 @@ public class FileHandlerService {
         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public void block(File file) throws FileNotFoundException {
+    public void block(File file) throws IOException {
         fileHandler.block(file);
         actionOverFileRepository.save(
             ActionOverFile.builder()
@@ -34,7 +35,7 @@ public class FileHandlerService {
                 .build());
     }
 
-    public void unblock(File file) throws FileNotFoundException {
+    public void unblock(File file) throws IOException {
         fileHandler.unblock(file);
         actionOverFileRepository.save(
             ActionOverFile.builder()
