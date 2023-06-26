@@ -71,9 +71,6 @@ public class FileHandlerController {
 
         log.info("Start to find directories for node: {}", node);
 
-        //
-
-
            List<DirectoryResponse> list =  Arrays.stream(new File(node).listFiles(File::isDirectory))
             .map(d ->
                 DirectoryResponse
@@ -133,7 +130,7 @@ public class FileHandlerController {
 
     public Boolean canWrite(Path path) {
         try {
-            return java.nio.file.Files.getPosixFilePermissions(path).contains(PosixFilePermission.OTHERS_WRITE);
+            return java.nio.file.Files.getPosixFilePermissions(path).contains(PosixFilePermission.GROUP_WRITE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -3,10 +3,8 @@ Ext.define('Control.view.arquivo.Lista', {
 	alias: 'widget.arquivolista',
 	border: false,
 	stateId: 'arquivolista',
-	//stateful: true,
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	store: 'Arquivo',
-	
 	initComponent: function() {
 		Ext.apply(this,{	
 			tbar: [{

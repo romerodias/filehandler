@@ -50,8 +50,7 @@ Ext.define('Control.util.Util', {
 		 * @param interger min Minutos
 		 * @return string No formato H:i
 		 * */
-		m2h: function(min) 
-		{
+		m2h: function(min) 	{
 			if(min < 0){ min = Math.abs(min);}
 			var num = new Number(min), //Minutes
 			h = Math.floor(num/60), //Hours
@@ -67,12 +66,10 @@ Ext.define('Control.util.Util', {
 			//console.log(icon);
 			return Ext.String.format('<img src="resources/icons/{0}.gif" alt=""/>',icon) + '&nbsp;&nbsp;' + v;
 		},
-		
-		
-		getLock: function(canWrite)
-		{
+
+		getLock: function(canWrite) {
 			var icon = canWrite == false ? 'fam/lock.png' : 'fam/lock_open.png';
-			return Ext.String.format('<img src="resources/icons/{0}" alt="{1}"/>',icon,icon);
+			return Ext.String.format('<img src="resources/icons/{0}" alt="" width="20"/>',icon);
 		}
 		
 		
