@@ -1,5 +1,6 @@
 package br.com.rdtecnologia.filehandler.controller;
 
+import br.com.rdtecnologia.filehandler.application.domain.Audit;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnList;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnTree;
 import br.com.rdtecnologia.filehandler.controller.response.DirectoryResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -22,12 +24,18 @@ import java.util.stream.Collectors;
 public class AuditController {
 
     @Autowired private ActionOverFileRepository actionOverFileRepository;
-
+    @Autowired private Audit audit;
     @GetMapping
     public JsonReturnList<ActionOverFile> get(
             @RequestParam("absolute_path") String absolutePath) {
 
         log.info("Start to find log audit for absolute path: {}", absolutePath);
+
+        try {
+            audit.gerUserMacAddress();
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
 
         return new JsonReturnList<ActionOverFile>(
             actionOverFileRepository.findByAbsolutePath(absolutePath)
