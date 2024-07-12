@@ -14,10 +14,9 @@ Ext.define('Control.view.diretorio.Tree' ,{
 		
 		Ext.apply(me, {
 			tbar: [{
-				text: 'Bloquear',
-				action: 'bloquear',
-				iconCls: 'lock-go',
-				hidden: true
+				text: 'Novo',
+				action: 'novo',
+				iconCls: 'lock-go'
 			},{
 				text: 'Desbloquear',
 				action: 'desbloquear',

@@ -6,42 +6,38 @@ import java.util.List;
 
 public class JsonReturnList<T> {
   private Integer totalCount;
-  private List<T> rows;
+  private List<T> data;
 
   public JsonReturnList() {}
 
   public JsonReturnList(Integer totalCount, List<T> rows) {
     super();
     this.totalCount = totalCount;
-    this.rows = rows;
+    this.data = rows;
   }
 
   public JsonReturnList(Page<T> page) {
     super();
     this.totalCount = (int)page.getTotalElements();
-    this.rows = page.getContent();
+    this.data = page.getContent();
   }
 
   public JsonReturnList(List<T> page) {
     super();
     this.totalCount = page.size();
-    this.rows = page;
+    this.data = page;
   }
 
   public Integer getTotalCount() {
     return totalCount;
   }
-
   public void setTotalCount(Integer totalCount) {
     this.totalCount = totalCount;
   }
-
-  public List<T> getRows() {
-    return rows;
+  public List<T> getData() {
+    return data;
   }
-
-  public void setRows(List<T> rows) {
-    this.rows = rows;
+  public void setData(List<T> data) {
+    this.data = data;
   }
-
 }

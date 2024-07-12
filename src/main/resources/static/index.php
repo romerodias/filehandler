@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Sistema de Bloqueio de Documentos</title>
+<title>RD DOC :: Gerênciamento Eletrônico de Documentos</title>
 	<style type="text/css" media="screen">
       	@import url('lib/extjs/resources/css/ext-all-gray.css');
 		@import url('resources/icons/silk.css');
@@ -31,7 +31,7 @@
 
 	
 	<!-- Loading modules -->
-	<script type="text/javascript">document.getElementById('loading-msg').innerHTML = '&nbsp;&nbsp;Carregando m�dulos...';</script>	
+	<script type="text/javascript">document.getElementById('loading-msg').innerHTML = '&nbsp;&nbsp;Carregando m�dulos...';</script>	
 	<script type="text/javascript" src="lib/extjs/ext.js"></script>
     <script type="text/javascript" src="app-1.1.0.js"></script> 	
     

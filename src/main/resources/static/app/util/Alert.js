@@ -6,7 +6,7 @@ Ext.define('Control.util.Alert', {
 		 */
 		info: function(options) {
 			var configObj = {
-				title: "Sistema de Bloqueio de Documentos",
+				title: "RD DOC :: Gerênciamento Eletrônico de Documentos",
 				icon: Ext.MessageBox.INFO,
 				buttons: Ext.MessageBox.OK
 			};

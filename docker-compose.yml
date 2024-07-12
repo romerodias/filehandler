@@ -49,6 +49,23 @@ services:
       MYSQL_ROOT_PASSWORD: sa123tecnol
     depends_on:
       - rdged-db
+  localstack:
+    image: localstack/localstack
+    environment:
+      - SERVICES=s3
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_OUTPUT=json
+    ports:
+      - "4566:4566" # s3
+
+      # docker-compose exec localstack bash
+      # aws --endpoint-url=http://0.0.0.0:4566 s3api create-bucket --bucket gesp.files
+      # aws --endpoint-url=http://0.0.0.0:4566 s3 cp sample.jpg s3://gesp.files/
+
+
 
 #  openldap:
 #    image: osixia/openldap:1.2.3

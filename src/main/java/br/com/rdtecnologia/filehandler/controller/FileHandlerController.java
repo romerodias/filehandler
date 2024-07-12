@@ -1,21 +1,26 @@
 package br.com.rdtecnologia.filehandler.controller;
 
+import br.com.rdtecnologia.filehandler.application.port.output.filehandler.FileHandlerPort;
+import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnList;
+import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnSuccess;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnTree;
 import br.com.rdtecnologia.filehandler.controller.response.DirectoryResponse;
 import br.com.rdtecnologia.filehandler.controller.response.FileResponse;
+import br.com.rdtecnologia.filehandler.repository.FilesRepository;
 import br.com.rdtecnologia.filehandler.service.FileHandlerService;
 import com.google.common.io.Files;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +28,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/file-handler")
-//@EnableSwagger2
 @Slf4j
 public class FileHandlerController {
 
@@ -60,6 +64,11 @@ public class FileHandlerController {
         }
     }
 
+    @PostMapping("/directory")
+    public void createFolder(@RequestParam("name") String name) throws IOException {
+        fileHandlerPort.createFolder(name);
+    }
+
     @GetMapping("/list-dir")
     public JsonReturnTree<DirectoryResponse> listDirectories(
         @RequestParam(value = "node", required = false) String node) {
@@ -92,39 +101,44 @@ public class FileHandlerController {
 
         return new JsonReturnTree<>(list);
     }
+
+    @Autowired private FilesRepository filesRepository;
+
     @GetMapping("/list-files")
-    public JsonReturnTree<FileResponse> listFiles(
+    public JsonReturnList<br.com.rdtecnologia.filehandler.model.File> listFiles(
         @RequestParam(value = "node", required = false) String node) {
 
-        if(node == null || node.isEmpty())
-            node = basePath;
-        else
-            node = basePath + node;
+        return new JsonReturnList<>(filesRepository.findAll());
 
-        log.info("Start to find files for node: {}", node);
-
-        return new JsonReturnTree<>(
-            Arrays.stream(new File(node).listFiles(File::isFile))
-            .map(d ->
-                FileResponse
-                    .builder()
-                    .id(d.getPath())
-                    .text(d.getName())
-                    .leaf(true)
-                    .cls("")
-                    .iconCls("")
-                    .canExecute(d.canExecute())
-                    .canRead(d.canRead())
-                    .canWrite(canWrite(d.toPath()))
-                    .extension(Files.getFileExtension(d.getName()))
-                    .build()
-                )
-                    .sorted(new Comparator<FileResponse>() {
-                        @Override
-                        public int compare(FileResponse o1, FileResponse o2) {
-                            return o1.getText().toUpperCase().compareTo(o2.getText().toUpperCase());
-                        }})
-                .collect(Collectors.toList()));
+//        if(node == null || node.isEmpty())
+//            node = basePath;
+//        else
+//            node = basePath + node;
+//
+//        log.info("Start to find files for node: {}", node);
+//
+//        return new JsonReturnTree<>(
+//            Arrays.stream(new File(node).listFiles(File::isFile))
+//            .map(d ->
+//                FileResponse
+//                    .builder()
+//                    .id(d.getPath())
+//                    .text(d.getName())
+//                    .leaf(true)
+//                    .cls("")
+//                    .iconCls("")
+//                    .canExecute(d.canExecute())
+//                    .canRead(d.canRead())
+//                    .canWrite(canWrite(d.toPath()))
+//                    .extension(Files.getFileExtension(d.getName()))
+//                    .build()
+//                )
+//                    .sorted(new Comparator<FileResponse>() {
+//                        @Override
+//                        public int compare(FileResponse o1, FileResponse o2) {
+//                            return o1.getText().toUpperCase().compareTo(o2.getText().toUpperCase());
+//                        }})
+//                .collect(Collectors.toList()));
 
     }
 
@@ -134,5 +148,45 @@ public class FileHandlerController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Autowired private FileHandlerPort fileHandlerPort;
+
+    @GetMapping("/download/{file_id}")
+    public void download(HttpServletResponse response, @PathVariable("file_id") String fileId)
+        throws IOException, ParseException {
+        makeDownload(response,fileHandlerPort.load(fileId).toFile());
+    }
+
+    @DeleteMapping("/{file_id}")
+    public JsonReturnSuccess delete(HttpServletResponse response, @PathVariable("file_id") String fileId)
+        throws IOException, ParseException {
+        fileHandlerPort.deleteFile(Path.of(fileId));
+        filesRepository.delete(filesRepository.findByName(fileId));
+        return new JsonReturnSuccess(fileId);
+    }
+
+    protected void makeDownload(HttpServletResponse response, File fileToDownload) {
+        try {
+            InputStream inputStream = new FileInputStream(fileToDownload);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Transfer-Encoding", "binary");
+            response.setHeader("Content-Length", String.valueOf(fileToDownload.length()));
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileToDownload.getName());
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @PostMapping("/upload")
+    public void uploadDocumento(@RequestParam("documento") MultipartFile file) throws Exception {
+        log.info("Uplaod od arquivo {}", file);
+        fileHandlerPort.store(file);
+        filesRepository.save(br.com.rdtecnologia.filehandler.model.File.builder()
+            .name(file.getOriginalFilename())
+            .size(file.getSize())
+            .build());
     }
 }

@@ -8,7 +8,7 @@ Ext.define('Control.view.Viewport',{
 		items: [{
             xtype: 'box',
             id: 'header',
-            html: '<h1 style="float:left">Sistema de Bloqueio de Documentos</h1><span id="btn-sair" style="float:right; margin: 8px"></span>',
+            html: '<h1 style="float:left">RD DOC :: Gerênciamento Eletrônico de Documentos</h1><span id="btn-sair" style="float:right; margin: 8px"></span>',
             height: 42,
             width: '100%'
     	}],

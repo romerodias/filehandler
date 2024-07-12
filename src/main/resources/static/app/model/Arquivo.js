@@ -15,7 +15,7 @@ Ext.define('Control.model.Arquivo',{
 	},{
 		name: 'observation' , type: 'string'
 	},{
-		name: 'text' , type: 'string'
+		name: 'name' , type: 'string'
 	},{
 		name: 'canWrite' , type: 'boolean'
 	}]

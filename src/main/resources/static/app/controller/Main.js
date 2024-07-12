@@ -2,7 +2,15 @@ Ext.define('Control.controller.Main',{
 	extend: 'Ext.app.Controller',
 	stores: ['Diretorio','Arquivo','ArquivoLog'],
 	models: ['Arquivo','ArquivoLog'],
-	views: ['Viewport','Panel','diretorio.Tree','arquivo.Lista','arquivo.log.Lista','arquivo.log.Form','log.consulta.Lista','log.consulta.Panel'],
+	views: ['Viewport','Panel',
+	    'diretorio.Tree',
+	    'diretorio.Form',
+	    'arquivo.Lista',
+	    'arquivo.Form',
+	    'arquivo.log.Lista',
+	    'arquivo.log.Form',
+	    'log.consulta.Lista',
+	    'log.consulta.Panel'],
 	
 	refs: [{
 		ref: 'diretorioTree', selector: 'diretoriotree'
@@ -42,13 +50,63 @@ Ext.define('Control.controller.Main',{
 			'diretoriotree button[action=bloquear]' : {
 				click: this.blockFolder
 			},
-			'diretoriotree button[action=desbloquear]' : {
-				click: this.unblockFolder
-			}
-			
+			'diretoriotree button[action=desbloquear]' : { click: this.unblockFolder },
+			'arquivolista button[action=novo]' : { click: this.openFormToUpload },
+			'arquivoform button[action=salvar]' : { click: this.addUpload },
+			'arquivolista button[action=download]' : { click: this.downloadFile },
+			'arquivolista button[action=deletar]' : { click: this.deleteFile },
+			'diretoriotree button[action=novo]' : { click: this.newDirectory },
+			'diretorioform button[action=salvar]' : { click: this.saveDirectory }
 		});
 	},
-	
+
+    deleteFile: function() {
+        var grid = this.getArquivoLista();
+        let record = grid.getSelectionModel().getSelection()[0];
+
+        if(!record.data.name){
+          Ext.Msg.alert('Atenção','Selecione um arquivo para ser deletado!');
+          return false;
+        }
+
+		Ext.Msg.confirm('Atenção','Realmente deseja excluir o arquivo ' + record.get('name')  + '?', function(btn){
+			if(btn!='yes') return;
+			grid.el.mask('Excluindo, aguarde...');
+
+
+            Ext.Ajax.request({
+                url: '/file-handler/' + record.data.name,
+                method: 'DELETE',
+                success: function(respose) {
+                    var json = Ext.decode(respose.responseText);
+                    if(json.success == false) {
+                        SCD.util.showAlert(json.data);
+                        grid.el.unmask();
+                    } else {
+                        grid.el.unmask();
+                        grid.getStore().load();
+                    }
+                },
+                failure: function(o,response) {
+                    var json = Ext.decode(o.responseText);
+                    SCD.util.showAlert(json.data);
+                    grid.el.unmask();
+                }
+            });
+		});
+
+    },
+
+    downloadFile: function() {
+        var grid = this.getArquivoLista();
+        let record = grid.getSelectionModel().getSelection()[0];
+        if(!record.data.name){
+          Ext.Msg.alert('Atenção','Selecione um arquivo para ser baixado!');
+          return false;
+        }
+        var url = '/file-handler/download/' + record.data.name;
+        window.location = url;
+    },
 
 	loadBaseDirOnTree: function() {
 		var store = this.getStore('Diretorio');
@@ -407,5 +465,67 @@ Ext.define('Control.controller.Main',{
 				absolute_path: files[0]
 			}
 		});
-	}
+	},
+
+	openFormToUpload: function(btn) {
+		var win = (!Ext.getCmp('arquivoform'))? Ext.widget('arquivoform') : Ext.getCmp('arquivoform'),
+			form = win.down('form');
+		form.getForm().reset();
+		win.show();
+	},
+
+    newDirectory: function(btn) {
+        var win = (!Ext.getCmp('diretorioform'))? Ext.widget('diretorioform') : Ext.getCmp('diretorioform'),
+            form = win.down('form');
+        form.getForm().reset();
+        win.show();
+    },
+
+    addUpload: function(btn) {
+        var win = btn.up('window'),
+            form = win.down('form'),
+            grid = this.getArquivoLista();
+
+        if(form.getForm().isValid()) {
+            win.el.mask('Salvando dados, aguarde..');
+            form.getForm().submit({
+                url: '/file-handler/upload',
+                success: function(frm, action){
+                    win.el.unmask();
+                    form.getForm().reset();
+                    win.hide();
+                    grid.getStore().load();
+                },
+                failure: function(o,response){
+                    var json = Ext.decode(response.response.responseText);
+                    SCD.util.showAlert(json.data);
+                    win.el.unmask();
+                }
+            });
+        }
+    },
+
+    saveDirectory: function(btn) {
+       var win = btn.up('window'),
+           form = win.down('form'),
+           grid = this.getDiretorioTree();
+
+       if(form.getForm().isValid()) {
+           win.el.mask('Salvando dados, aguarde..');
+           form.getForm().submit({
+               url: '/file-handler/directory',
+               success: function(frm, action){
+                   win.el.unmask();
+                   form.getForm().reset();
+                   win.hide();
+                   grid.getStore().load();
+               },
+               failure: function(o,response){
+                   var json = Ext.decode(response.response.responseText);
+                   SCD.util.showAlert(json.data);
+                   win.el.unmask();
+               }
+           });
+       }
+   }
 });

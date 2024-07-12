@@ -8,6 +8,18 @@ Ext.define('Control.view.arquivo.Lista', {
 	initComponent: function() {
 		Ext.apply(this,{	
 			tbar: [{
+                text: 'Novo',
+                action: 'novo',
+                iconCls: 'silk-application-add'
+            },{
+                text: 'Download',
+                action: 'download',
+                iconCls: 'silk-application-add'
+            },{
+                text: 'Deletar',
+                action: 'deletar',
+                iconCls: 'silk-application-add'
+            },{
 				text: 'Bloquear',
 				action: 'bloquear',
 				iconCls: 'lock-go',
@@ -38,7 +50,7 @@ Ext.define('Control.view.arquivo.Lista', {
                 width: 30
             },{
 				header: 'Arquivo',
-				dataIndex: 'text',
+				dataIndex: 'name',
 				sortable: true,
 				width: 300,
 				renderer: Control.util.getIconExtension
