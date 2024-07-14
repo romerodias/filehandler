@@ -2,7 +2,7 @@ Ext.define('Control.store.Diretorio' ,{
 	extend: 'Ext.data.TreeStore',
 	autoLoad: false,
 	root: {
-		text: 'Engenharia', 
+		text: 'Diretórios',
 		expanded: false, 
 		id: ''
 	},

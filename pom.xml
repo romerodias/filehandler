@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>br.com.rdtecnologia</groupId>
 	<artifactId>filehandler</artifactId>
-	<version>0.1.2</version>
+	<version>1.0.0</version>
 	<name>filehandler</name>
 	<description>Microserviço para bloqueio e desbloqueio de documentos</description>
 

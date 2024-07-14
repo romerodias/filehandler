@@ -11,21 +11,21 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "files")
+@Table(name = "directories")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class File {
+public class Directory {
 
   @Id
   @GeneratedValue(generator="system-uuid")
   @GenericGenerator(name="system-uuid", strategy = "uuid")
   private String id;
-  private String name;
-  private Long size;
+  private String parent;
   @Column(name = "tenant_id")
   private String tenantId;
-  private String pathId;
+  private String name;
+  private String path;
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 

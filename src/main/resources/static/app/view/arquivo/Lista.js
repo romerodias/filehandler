@@ -14,21 +14,22 @@ Ext.define('Control.view.arquivo.Lista', {
             },{
                 text: 'Download',
                 action: 'download',
-                iconCls: 'silk-application-add'
+                iconCls: 'silk-application-edit'
             },{
                 text: 'Deletar',
                 action: 'deletar',
-                iconCls: 'silk-application-add'
+                iconCls: 'silk-application-delete'
             },{
-				text: 'Bloquear',
+				text: 'Enviar',
 				action: 'bloquear',
 				iconCls: 'lock-go',
+				tooltip: 'Enviar arquivo por e-mail',
 				disabled: true
 			},{
 				text: 'Desbloquear',
 				action: 'desbloquear',
 				iconCls: 'lock-delete',
-				disabled: true
+				hidden: true
 			},{
 				text: 'Ver Log',
 				action: 'viewlog',

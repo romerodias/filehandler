@@ -64,6 +64,8 @@ services:
       # docker-compose exec localstack bash
       # aws --endpoint-url=http://0.0.0.0:4566 s3api create-bucket --bucket gesp.files
       # aws --endpoint-url=http://0.0.0.0:4566 s3 cp sample.jpg s3://gesp.files/
+      # aws --endpoint-url=http://0.0.0.0:4566 s3 rm s3://gesp.files/ --recursive
+      # aws --endpoint-url=http://0.0.0.0:4566 s3 ls s3://gesp.files/
 
 
 

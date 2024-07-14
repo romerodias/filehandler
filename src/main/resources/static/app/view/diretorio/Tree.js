@@ -36,7 +36,7 @@ Ext.define('Control.view.diretorio.Tree' ,{
 			//console.log(operation.node);
 			//console.log(operation.node.getPath());
 			//operation.params.node = "teste";
-			operation.params.node  = this.processParentsNodes(operation.node).getParentsNodes('/');
+			//operation.params.node  = this.processParentsNodes(operation.node).getParentsNodes('/');
 		}
 	},
 	

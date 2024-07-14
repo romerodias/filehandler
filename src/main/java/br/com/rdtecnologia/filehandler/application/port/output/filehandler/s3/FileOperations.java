@@ -1,16 +1,11 @@
 package br.com.rdtecnologia.filehandler.application.port.output.filehandler.s3;
 
 import br.com.rdtecnologia.filehandler.application.port.output.filehandler.FileHandlerPort;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,8 +38,8 @@ public class FileOperations implements FileHandlerPort {
 
 
     @Override
-    public void deleteFile(Path file) throws IOException {
-        s3client.deleteObject(bucketName,file.getFileName().toString());
+    public void deleteFile(String file) throws IOException {
+        s3client.deleteObject(bucketName,file);
     }
 
     @Override
@@ -59,6 +54,19 @@ public class FileOperations implements FileHandlerPort {
         );
         return file.getOriginalFilename();
     }
+
+
+    @Override
+    public String storeToPath(MultipartFile file, String path) throws Exception {
+        s3client.putObject(
+            bucketName,
+                path + file.getOriginalFilename(),
+            convertMultiPartToFile(file)
+        );
+        return file.getOriginalFilename();
+    }
+
+
 
     private File convertMultiPartToFile(MultipartFile file ) throws IOException {
         File convFile = new File( file.getOriginalFilename() );

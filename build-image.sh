@@ -17,6 +17,6 @@ project_version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}'
 commit_message=$(git show -s --format=%s)
 git tag -a "$project_version" -m "$commit_message"
 mvn -Dproject.build.sourceEncoding=UTF-8 -Dproject.reporting.outputEncoding=UTF-8 clean install -DskipTests
-docker build . -t romerodias/rdged:$project_version
+docker build . -t romerodias/filehandler:$project_version
 #docker login --username=romerodias --password=manuw2ktp
-#docker push romerodias/rdged:$project_version
+#docker push romerodias/filehandler:$project_version

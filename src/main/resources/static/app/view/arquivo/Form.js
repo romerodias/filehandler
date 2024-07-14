@@ -53,7 +53,7 @@
          }
 				},{
 				  xtype: 'hidden',
-				  name: 'IDDOC'
+				  name: 'path'
 				}]
 			}]
 		}]

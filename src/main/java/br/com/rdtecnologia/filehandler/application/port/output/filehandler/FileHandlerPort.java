@@ -11,11 +11,13 @@ import java.util.stream.Stream;
 public interface FileHandlerPort {
     void createFolder(String folderName);
 
-    void deleteFile(Path file) throws IOException;
+    void deleteFile(String file) throws IOException;
 
     void init();
 
     String store(MultipartFile file) throws Exception;
+
+    String storeToPath(MultipartFile file, String path) throws Exception;
 
     String store(MultipartFile file, String fileName) throws Exception;
 

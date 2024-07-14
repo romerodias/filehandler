@@ -10,4 +10,6 @@ public interface FilesRepository extends CrudRepository<File, String> {
     List<File> findAll();
 
     File findByName(String name);
+
+    List<File> findByPathIdAndTenantId(String pathId, String tenantId);
 }

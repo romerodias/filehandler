@@ -5,22 +5,23 @@ import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnList;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnSuccess;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnTree;
 import br.com.rdtecnologia.filehandler.controller.response.DirectoryResponse;
-import br.com.rdtecnologia.filehandler.controller.response.FileResponse;
+import br.com.rdtecnologia.filehandler.model.Directory;
+import br.com.rdtecnologia.filehandler.repository.DirectoryRepository;
 import br.com.rdtecnologia.filehandler.repository.FilesRepository;
 import br.com.rdtecnologia.filehandler.service.FileHandlerService;
-import com.google.common.io.Files;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -29,10 +30,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/file-handler")
 @Slf4j
-public class FileHandlerController {
+public class FileHandlerController extends BaseController {
 
     @Autowired private FileHandlerService fileHandlerService;
     @Value("${base.path}") private String basePath;
+
+    @Autowired private DirectoryRepository directoryRepository;
 
     @PostMapping("/block")
     public void block(
@@ -65,26 +68,54 @@ public class FileHandlerController {
     }
 
     @PostMapping("/directory")
-    public void createFolder(@RequestParam("name") String name) throws IOException {
-        fileHandlerPort.createFolder(name);
+    public void createFolder(
+        @RequestParam("name") String name,
+        @RequestParam("id") String id) throws IOException {
+
+        String dir = name + "/";
+
+        String parentDirPath = null;
+
+        if(id != null && !id.trim().isEmpty()) {
+            parentDirPath = directoryRepository.findByIdAndTenantId(id, getUserContractId()).getPath();
+            dir = parentDirPath + name + "/";
+        }
+        if(id == null || id.isEmpty()) id = null;
+
+        log.info("Start to create folder with name: {}", dir);
+
+        fileHandlerPort.createFolder(dir);
+
+        directoryRepository.save(Directory.builder()
+            .createdAt(LocalDateTime.now())
+            .parent(id)
+            .path(dir)
+            .name(name)
+            .tenantId(getUserContractId())
+            .build());
     }
 
     @GetMapping("/list-dir")
     public JsonReturnTree<DirectoryResponse> listDirectories(
         @RequestParam(value = "node", required = false) String node) {
 
+        /**
         if(node == null || node.isEmpty())
-            node = basePath;
+            node = basePath; // search for root nodes
         else
-            node = basePath + node;
+            node = basePath + node; // for given node, search for its childs
+        **/
+
+        if(node == null || node.isEmpty())
+            node = null;
 
         log.info("Start to find directories for node: {}", node);
 
-           List<DirectoryResponse> list =  Arrays.stream(new File(node).listFiles(File::isDirectory))
+           List<DirectoryResponse> list =  directoryRepository.findByParentAndTenantId(node, getUserContractId()).stream()
             .map(d ->
                 DirectoryResponse
                     .builder()
-                    .id(d.getPath())
+                    .id(d.getId())
                     .text(d.getName())
                     .leaf(false)
                     .cls("folder")
@@ -108,7 +139,9 @@ public class FileHandlerController {
     public JsonReturnList<br.com.rdtecnologia.filehandler.model.File> listFiles(
         @RequestParam(value = "node", required = false) String node) {
 
-        return new JsonReturnList<>(filesRepository.findAll());
+        log.info("List files in directory: {} for tenantId: {}", node, getUserContractId());
+
+        return new JsonReturnList<>(filesRepository.findByPathIdAndTenantId(node, getUserContractId()));
 
 //        if(node == null || node.isEmpty())
 //            node = basePath;
@@ -155,38 +188,59 @@ public class FileHandlerController {
     @GetMapping("/download/{file_id}")
     public void download(HttpServletResponse response, @PathVariable("file_id") String fileId)
         throws IOException, ParseException {
-        makeDownload(response,fileHandlerPort.load(fileId).toFile());
+
+        // TODO permissao
+
+        log.info("Start to download file to file id :{}",fileId);
+
+        br.com.rdtecnologia.filehandler.model.File file = filesRepository.findById(fileId).get();
+        Directory dir = directoryRepository.findById(file.getPathId()).get();
+
+        log.info("Start to download file to file id :{} and path: {}",fileId, dir.getPath());
+
+        makeDownload(response,fileHandlerPort.load(dir.getPath() + file.getName()).toFile());
     }
+
 
     @DeleteMapping("/{file_id}")
     public JsonReturnSuccess delete(HttpServletResponse response, @PathVariable("file_id") String fileId)
         throws IOException, ParseException {
-        fileHandlerPort.deleteFile(Path.of(fileId));
-        filesRepository.delete(filesRepository.findByName(fileId));
+
+        //permissao
+
+        //se é do teant
+
+        br.com.rdtecnologia.filehandler.model.File file = filesRepository.findById(fileId).get();
+        Directory dir = directoryRepository.findById(file.getPathId()).get();
+
+        log.info("Start to delete file:{} and path: {}",file.getName(), dir.getPath());
+
+        fileHandlerPort.deleteFile(dir.getPath() + file.getName());
+
+        filesRepository.delete(filesRepository.findById(fileId).get());
         return new JsonReturnSuccess(fileId);
     }
 
-    protected void makeDownload(HttpServletResponse response, File fileToDownload) {
-        try {
-            InputStream inputStream = new FileInputStream(fileToDownload);
-            response.setContentType("application/force-download");
-            response.setHeader("Content-Transfer-Encoding", "binary");
-            response.setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileToDownload.getName());
-            IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-            inputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     @PostMapping("/upload")
-    public void uploadDocumento(@RequestParam("documento") MultipartFile file) throws Exception {
-        log.info("Uplaod od arquivo {}", file);
-        fileHandlerPort.store(file);
+    public void uploadDocumento(
+        @RequestParam("documento") MultipartFile file,
+        @RequestParam("path") String path ) throws Exception {
+
+        // permissao
+
+        Directory dir = directoryRepository.findByIdAndTenantId(path, getUserContractId());
+
+        log.info("Uplaod od arquivo: {} to path: {}", file.getOriginalFilename(), dir.getPath());
+
+        fileHandlerPort.storeToPath(file, dir.getPath());
+
         filesRepository.save(br.com.rdtecnologia.filehandler.model.File.builder()
             .name(file.getOriginalFilename())
             .size(file.getSize())
+            .tenantId(getUserContractId())
+            .pathId(dir.getId())
+            .createdAt(LocalDateTime.now())
             .build());
     }
 }

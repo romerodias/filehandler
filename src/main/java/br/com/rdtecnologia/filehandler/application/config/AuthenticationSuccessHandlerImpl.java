@@ -1,5 +1,8 @@
 package br.com.rdtecnologia.filehandler.application.config;
 
+import br.com.rdtecnologia.filehandler.model.SystemContract;
+import br.com.rdtecnologia.filehandler.service.UsuarioService;
+import br.com.rdtecnologia.filehandler.service.UsuarioServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +22,7 @@ import java.security.Principal;
 public class AuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired private HttpSession session;
+    @Autowired private UsuarioService usuarioService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -31,8 +35,8 @@ public class AuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthentic
         }else {
             userName = ((User)authentication.getPrincipal()).getUsername();
         }
-//        SystemContract systemContract = usuarioService.findByLogin(userName).getContract();
-  //      session.setAttribute("contractId", systemContract.getId());
+        SystemContract systemContract = usuarioService.findByLogin(userName).getContract();
+        session.setAttribute("contractId", systemContract.getId());
         log.info("User [{}] create session",
             userName);
         super.onAuthenticationSuccess(request, response, authentication);

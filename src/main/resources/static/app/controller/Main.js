@@ -75,7 +75,7 @@ Ext.define('Control.controller.Main',{
 
 
             Ext.Ajax.request({
-                url: '/file-handler/' + record.data.name,
+                url: '/file-handler/' + record.data.id,
                 method: 'DELETE',
                 success: function(respose) {
                     var json = Ext.decode(respose.responseText);
@@ -104,7 +104,7 @@ Ext.define('Control.controller.Main',{
           Ext.Msg.alert('Atenção','Selecione um arquivo para ser baixado!');
           return false;
         }
-        var url = '/file-handler/download/' + record.data.name;
+        var url = '/file-handler/download/' + record.data.id;
         window.location = url;
     },
 
@@ -258,28 +258,28 @@ Ext.define('Control.controller.Main',{
 	
 	/* Disable buttons */
 	desabilitarBotoes: function() {
-		var btnViewLog = Ext.ComponentQuery.query('arquivolista button[action=viewlog]')[0];
-		var btnLockFile = Ext.ComponentQuery.query('arquivolista button[action=bloquear]')[0];
-		var btnUnlockFile = Ext.ComponentQuery.query('arquivolista button[action=desbloquear]')[0];
-		btnViewLog.disable();
-		btnLockFile.disable();
-		btnUnlockFile.disable();		
+//		var btnViewLog = Ext.ComponentQuery.query('arquivolista button[action=viewlog]')[0];
+//		var btnLockFile = Ext.ComponentQuery.query('arquivolista button[action=bloquear]')[0];
+//		var btnUnlockFile = Ext.ComponentQuery.query('arquivolista button[action=desbloquear]')[0];
+//		btnViewLog.disable();
+//		btnLockFile.disable();
+//		btnUnlockFile.disable();
 	},
 	
 	/* Enable directory tree buttons */
 	enableTreeButtons: function() {
-		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=bloquear]')[0];
-		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=desbloquear]')[0];
-		btnLockFile.enable();
-		btnUnlockFile.enable();		
+//		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=bloquear]')[0];
+//		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=desbloquear]')[0];
+//		btnLockFile.enable();
+//		btnUnlockFile.enable();
 	},
 	
 	/* Disable directory tree buttons */
 	disableTreeButtons: function() {
-		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=bloquear]')[0];
-		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=desbloquear]')[0];
-		btnLockFile.disable();
-		btnUnlockFile.disable();			
+//		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=bloquear]')[0];
+//		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=desbloquear]')[0];
+//		btnLockFile.disable();
+//		btnUnlockFile.disable();
 	},
 
 	
@@ -305,17 +305,19 @@ Ext.define('Control.controller.Main',{
 		this.desabilitarBotoes();
 		var node = this.getDiretorioTree().processParentsNodes(rec).getParentsNodes('/');
 		var arquivoLista = this.getArquivoLista();
-		
+
 		/* Disable buttons on root level */
-		if(rec.isRoot())
+		if(rec.isRoot()) {
 			this.disableTreeButtons();
-		else
+			return;
+		} else
 			this.enableTreeButtons();
 		
 		arquivoLista.el.mask('Carregando arquivos, aguarde...');
+		arquivoLista.getStore().proxy.extraParams.node = rec.raw.id;
 		arquivoLista.getStore().load({
 			params: {
-				node: node
+				node: rec.raw.id
 			},
 			callback: function() {
 				arquivoLista.el.unmask();
@@ -469,15 +471,34 @@ Ext.define('Control.controller.Main',{
 
 	openFormToUpload: function(btn) {
 		var win = (!Ext.getCmp('arquivoform'))? Ext.widget('arquivoform') : Ext.getCmp('arquivoform'),
-			form = win.down('form');
-		form.getForm().reset();
+			form = win.down('form'),
+			tree = this.getDiretorioTree(),
+			node = tree.getSelectionModel().getSelection()[0];
+
+        form.getForm().reset();
+
+		if(node.raw) {
+	        form.getForm().findField('path').setValue(node.raw.id);
+	    } else {
+            Ext.MessageBox.alert({
+                title: 'Atenção',
+                msg: 'Selecione um diretório válido!',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.MessageBox.OK
+            });
+            return false;
+	    }
 		win.show();
 	},
 
     newDirectory: function(btn) {
         var win = (!Ext.getCmp('diretorioform'))? Ext.widget('diretorioform') : Ext.getCmp('diretorioform'),
-            form = win.down('form');
+            form = win.down('form'),
+            tree = this.getDiretorioTree();
+		var node = tree.getSelectionModel().getSelection()[0];
         form.getForm().reset();
+		if(node.raw)
+	        form.getForm().findField('id').setValue(node.raw.id);
         win.show();
     },
 

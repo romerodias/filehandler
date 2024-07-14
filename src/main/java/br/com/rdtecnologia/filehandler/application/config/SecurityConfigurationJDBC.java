@@ -72,10 +72,11 @@ public class SecurityConfigurationJDBC {
                 .anyRequest().authenticated()
             )
             .formLogin((form) -> form
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .defaultSuccessUrl("/")
-                    .permitAll()
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/")
+                .successHandler(authenticationSuccessHandler)
+                .permitAll()
             )
             .logout((logout) -> logout.permitAll())
             .exceptionHandling().accessDeniedPage("/access-denied");

@@ -30,5 +30,8 @@ public class Usuario {
   @JoinColumn(name = "IDPERFIL")
   private Perfil perfil;
 
+  @ManyToOne
+  @JoinColumn(name = "contract_id")
+  private SystemContract contract;
 
 }
