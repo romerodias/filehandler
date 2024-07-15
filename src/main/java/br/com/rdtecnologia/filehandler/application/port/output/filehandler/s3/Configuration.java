@@ -1,5 +1,7 @@
 package br.com.rdtecnologia.filehandler.application.port.output.filehandler.s3;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -20,6 +22,7 @@ public class Configuration {
     @Profile("!production")
     @Qualifier("s3client")
     public AmazonS3 s3client() {
+
         return AmazonS3ClientBuilder
             .standard()
             //.withEndpointConfiguration(new EndpointConfiguration("http://0.0.0.0:4566", bucketRegion))
