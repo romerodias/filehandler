@@ -1,5 +1,5 @@
-FROM centos
-RUN yum -y update && yum install -y java-11 && yum install -y epel-release && yum groupinstall -y "fonts"
+FROM openjdk:17-jdk-slim
+
 RUN mkdir -p /opt/app/
 
 COPY ./target/filehandler-*.jar /opt/app/app.jar

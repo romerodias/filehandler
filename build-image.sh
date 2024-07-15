@@ -9,7 +9,7 @@ set -x #echo on
 #docker push romerodias/scd:$(git describe --tags --abbrev=0)
 
 
-
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
 #mvn versions:set -DnewVersion=$(git describe --tags --abbrev=0)
 
 
@@ -18,5 +18,5 @@ commit_message=$(git show -s --format=%s)
 git tag -a "$project_version" -m "$commit_message"
 mvn -Dproject.build.sourceEncoding=UTF-8 -Dproject.reporting.outputEncoding=UTF-8 clean install -DskipTests
 docker build . -t romerodias/filehandler:$project_version
-#docker login --username=romerodias --password=manuw2ktp
-#docker push romerodias/filehandler:$project_version
+docker login --username=romerodias --password=manuw2ktp
+docker push romerodias/filehandler:$project_version
