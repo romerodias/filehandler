@@ -22,7 +22,8 @@ public class Configuration {
     public AmazonS3 s3client() {
         return AmazonS3ClientBuilder
             .standard()
-            .withEndpointConfiguration(new EndpointConfiguration("http://0.0.0.0:4566", bucketRegion))
+            //.withEndpointConfiguration(new EndpointConfiguration("http://0.0.0.0:4566", bucketRegion))
+            .withRegion(bucketRegion)
             .build();
     }
 
