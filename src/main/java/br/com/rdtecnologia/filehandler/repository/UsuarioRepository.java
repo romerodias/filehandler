@@ -9,7 +9,8 @@ import java.util.List;
 public interface UsuarioRepository extends JpaSpecificationExecutor<Usuario>,
 		PagingAndSortingRepository<Usuario, Integer> {
 
-	public List<Usuario> findAllByOrderByNameAsc();
+	List<Usuario> findAllByOrderByNameAsc();
 
 	Usuario findByName(String name);
+
 }

@@ -80,7 +80,7 @@ Ext.define('Control.controller.Main',{
                 success: function(respose) {
                     var json = Ext.decode(respose.responseText);
                     if(json.success == false) {
-                        SCD.util.showAlert(json.data);
+                        Control.util.showAlert(json.data);
                         grid.el.unmask();
                     } else {
                         grid.el.unmask();
@@ -89,7 +89,7 @@ Ext.define('Control.controller.Main',{
                 },
                 failure: function(o,response) {
                     var json = Ext.decode(o.responseText);
-                    SCD.util.showAlert(json.data);
+                    Control.util.showAlert(json.data);
                     grid.el.unmask();
                 }
             });
@@ -258,18 +258,39 @@ Ext.define('Control.controller.Main',{
 	
 	/* Disable buttons */
 	desabilitarBotoes: function() {
-//		var btnViewLog = Ext.ComponentQuery.query('arquivolista button[action=viewlog]')[0];
-//		var btnLockFile = Ext.ComponentQuery.query('arquivolista button[action=bloquear]')[0];
-//		var btnUnlockFile = Ext.ComponentQuery.query('arquivolista button[action=desbloquear]')[0];
+//		var btnViewLog = Ext.ComponentQuery.query('arquivolista button[action=novo]')[0];
+//		var btnLockFile = Ext.ComponentQuery.query('arquivolista button[action=download]')[0];
+//		var btnUnlockFile = Ext.ComponentQuery.query('arquivolista button[action=delete]')[0];
 //		btnViewLog.disable();
 //		btnLockFile.disable();
 //		btnUnlockFile.disable();
 	},
 	
 	/* Enable directory tree buttons */
-	enableTreeButtons: function() {
-//		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=bloquear]')[0];
-//		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=desbloquear]')[0];
+	enableTreeButtons: function(directoryId) {
+		var btnNovo = Ext.ComponentQuery.query('arquivolista button[action=novo]')[0];
+	    var btnDownload = Ext.ComponentQuery.query('arquivolista button[action=download]')[0];
+    	var btnDelete = Ext.ComponentQuery.query('arquivolista button[action=delete]')[0];
+
+	    /* with directory id parameter search for permission to create file and delete files */
+		Ext.Ajax.request({
+             url: '/file-handler/acl/' + directoryId,
+             success: function(request) {
+             var json = Ext.decode(request.responseText);
+			 console.log(json);
+                if(json.totalCount == 1) {
+                   btnNovo.setDisabled(!json.data[0].canWrite);
+				   btnDelete.setDisabled(!json.data[0].canDelete);
+                } else {
+                    btnNovo.setDisabled(false);
+                    btnDelete.setDisabled(false);
+                }
+            }
+        });
+
+
+//		var btnLockFile = Ext.ComponentQuery.query('diretoriotree button[action=novo]')[0];
+//		var btnUnlockFile = Ext.ComponentQuery.query('diretoriotree button[action=download]')[0];
 //		btnLockFile.enable();
 //		btnUnlockFile.enable();
 	},
@@ -307,12 +328,8 @@ Ext.define('Control.controller.Main',{
 		var arquivoLista = this.getArquivoLista();
 
 		/* Disable buttons on root level */
-		if(rec.isRoot()) {
-			this.disableTreeButtons();
-			return;
-		} else
-			this.enableTreeButtons();
-		
+		this.enableTreeButtons(rec.raw.id);
+
 		arquivoLista.el.mask('Carregando arquivos, aguarde...');
 		arquivoLista.getStore().proxy.extraParams.node = rec.raw.id;
 		arquivoLista.getStore().load({
@@ -519,7 +536,7 @@ Ext.define('Control.controller.Main',{
                 },
                 failure: function(o,response){
                     var json = Ext.decode(response.response.responseText);
-                    SCD.util.showAlert(json.data);
+                    Control.util.showAlert(json.data);
                     win.el.unmask();
                 }
             });
@@ -543,7 +560,7 @@ Ext.define('Control.controller.Main',{
                },
                failure: function(o,response){
                    var json = Ext.decode(response.response.responseText);
-                   SCD.util.showAlert(json.data);
+                   Control.util.showAlert(json.data);
                    win.el.unmask();
                }
            });

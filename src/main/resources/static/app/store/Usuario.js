@@ -1,8 +1,8 @@
-Ext.define('SCD.store.Usuario',{
+Ext.define('Control.store.Usuario',{
 	extend: 'Ext.data.Store',
-	model: 'SCD.model.Usuario',
+	model: 'Control.model.Usuario',
 	remoteSort: false,
-	pageSize : SCD.util.Util.pageSize,
+	pageSize : Control.util.Util.pageSize,
 	proxy: {
 		type: 'ajax',
 		url: '/usuario/listar',

@@ -1,4 +1,4 @@
-﻿Ext.define('SCD.view.usuario.Lista',{
+﻿Ext.define('Control.view.usuario.Lista',{
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.usuariolista',
 	store: 'Usuario',
@@ -46,18 +46,7 @@
 		dataIndex: 'active',
 		sortable: true,
 		flex: 1,
-		renderer: SCD.util.renderSimNaoInteger
-	},{
-		header: 'Funcionário',
-		dataIndex: 'funcionario.nome',
-		renderer: function(v, m, r) {
-			if(typeof r.data["funcionario"] != "undefined")
-				return r.data.funcionario.NOME;
-			else
-				return r.raw.funcionario.NOME;
-		},		
-		sortable: true,
-		flex: 3
+		renderer: Control.util.renderSimNaoInteger
 	},{
 		header: 'Perfil',
 		dataIndex: 'perfil.nome',

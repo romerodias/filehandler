@@ -18,5 +18,7 @@ Ext.define('Control.model.Arquivo',{
 		name: 'name' , type: 'string'
 	},{
 		name: 'canWrite' , type: 'boolean'
+	},{
+		name: 'size' , type: 'int'
 	}]
 });

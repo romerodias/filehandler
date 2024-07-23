@@ -1,4 +1,4 @@
-Ext.define('SCD.controller.Usuario', {
+Ext.define('Control.controller.Usuario', {
     extend: 'Ext.app.Controller',
     models: ['Usuario'],
     stores: ['Usuario'],
@@ -48,7 +48,7 @@ Ext.define('SCD.controller.Usuario', {
                         grid.el.unmask();
                     }
                     else {
-                        SCD.util.showAlert(json.data);
+                        Control.util.showAlert(json.data);
                         grid.el.unmask();
                     }
                 }
@@ -68,7 +68,7 @@ Ext.define('SCD.controller.Usuario', {
                 url: '/Upload/salvar',
                 success: function (frm, action) {
                     win.el.unmask();
-                    grid.getStore().add(Ext.create('SCD.model.Upload', {
+                    grid.getStore().add(Ext.create('Control.model.Upload', {
                         nome: form.getForm().findField('nome').getValue(),
                         path: action.result.path,
                         filename: action.result.filename,
@@ -80,7 +80,7 @@ Ext.define('SCD.controller.Usuario', {
                 },
                 failure: function (o, response) {
                     var json = Ext.decode(response.response.responseText);
-                    SCD.util.showAlert(json.data);
+                    Control.util.showAlert(json.data);
                     win.el.unmask();
                 }
             });
@@ -148,13 +148,13 @@ Ext.define('SCD.controller.Usuario', {
 
             win.el.mask('Salvando dados, aguarde...');
             Ext.Ajax.request({
-                url: SCD.util.urlBackEnd + '/usuario/salvar',
+                url: Control.util.urlBackEnd + '/usuario/salvar',
                 method: 'POST',
                 jsonData: Ext.encode(formValues),
                 success: function (respose) {
                     var json = Ext.decode(respose.responseText);
                     if (json.success == false) {
-                        SCD.util.showAlert(json.data);
+                        Control.util.showAlert(json.data);
                         win.el.unmask();
                     } else {
                         form.reset();
@@ -167,7 +167,7 @@ Ext.define('SCD.controller.Usuario', {
                     console.log(o);
                     console.log(response);
                     var json = Ext.decode(o.responseText);
-                    SCD.util.showAlert(json.data);
+                    Control.util.showAlert(json.data);
                     win.el.unmask();
                 }
             });
@@ -179,7 +179,7 @@ Ext.define('SCD.controller.Usuario', {
             record = grid.getSelectionModel().getSelection()[0];
 
         if (record.length === 0) {
-            SCD.util.showAlert('Selecione usuario!');
+            Control.util.showAlert('Selecione usuario!');
             return false;
         }
 
@@ -187,7 +187,7 @@ Ext.define('SCD.controller.Usuario', {
             if (btn != 'yes') return;
             grid.el.mask('Excluindo, aguarde...');
             Ext.Ajax.request({
-                url: SCD.util.urlBackEnd + '/usuario/excluir/' + record.get('IDINFO'),
+                url: Control.util.urlBackEnd + '/usuario/excluir/' + record.get('IDINFO'),
                 success: function (response) {
                     var json = Ext.decode(response.responseText);
                     if (json.success) {
@@ -195,7 +195,7 @@ Ext.define('SCD.controller.Usuario', {
                         grid.el.unmask();
                     }
                     else {
-                        SCD.util.showAlert(json.data);
+                        Control.util.showAlert(json.data);
                         grid.el.unmask();
                     }
                 }
@@ -209,7 +209,7 @@ Ext.define('SCD.controller.Usuario', {
             record = grid.getSelectionModel().getSelection()[0];
 
         if (record.length === 0) {
-            SCD.util.showAlert('Selecione usuario!');
+            Control.util.showAlert('Selecione usuario!');
             return false;
         }
         var action = btn.action;
@@ -218,7 +218,7 @@ Ext.define('SCD.controller.Usuario', {
             grid.el.mask('Excluindo, aguarde...');
             Ext.Ajax.request({
                 method: 'PATCH',
-                url: SCD.util.urlBackEnd + '/usuario/' + record.get('ID') + '/' + action,
+                url: Control.util.urlBackEnd + '/usuario/' + record.get('ID') + '/' + action,
                 success: function (response) {
                     var json = Ext.decode(response.responseText);
                     if (json.success) {
@@ -226,7 +226,7 @@ Ext.define('SCD.controller.Usuario', {
                         grid.el.unmask();
                     }
                     else {
-                        SCD.util.showAlert(json.data);
+                        Control.util.showAlert(json.data);
                         grid.el.unmask();
                     }
                 }

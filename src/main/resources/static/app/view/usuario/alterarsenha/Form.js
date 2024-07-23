@@ -1,4 +1,4 @@
-﻿Ext.define('SCD.view.usuario.alterarsenha.Form',{
+﻿Ext.define('Control.view.usuario.alterarsenha.Form',{
 	extend: 'Ext.window.Window',
 	alias: 'widget.usuarioformalterarsenha',
 	id: 'usuarioformalterarsenha',
@@ -51,7 +51,7 @@
                 var formValues = form.getValues();
                 win.el.mask('Alterando sua senha, aguarde...');
                 Ext.Ajax.request({
-                    url: SCD.util.urlBackEnd + '/usuario/alterar-senha',
+                    url: Control.util.urlBackEnd + '/usuario/alterar-senha',
                     method: 'POST',
                     jsonData: Ext.encode(formValues),
                     success: function(respose) {

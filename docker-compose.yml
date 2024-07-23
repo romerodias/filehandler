@@ -66,6 +66,7 @@ services:
       # aws --endpoint-url=http://0.0.0.0:4566 s3 cp sample.jpg s3://gesp.files/
       # aws --endpoint-url=http://0.0.0.0:4566 s3 rm s3://gesp.files/ --recursive
       # aws --endpoint-url=http://0.0.0.0:4566 s3 ls s3://gesp.files/
+      # aws --endpoint-url=http://0.0.0.0:4566  s3api put-object --bucket gesp.files --key 975fa7b9-ef52-11eb-988d-0242ac120003/ --content-length 0
 
 
 

@@ -2,12 +2,17 @@ package br.com.rdtecnologia.filehandler.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "LOGIN_PERFIL")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Perfil {
 
   @Id
@@ -29,4 +34,7 @@ public class Perfil {
   @Column(name = "contract_id")
   private String contractId;
 
+  @OneToMany
+  @JoinColumn(name = "profile_id")
+  private List<DirectoryAccessControl> directoryAccessControls;
 }

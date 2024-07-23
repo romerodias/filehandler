@@ -1,4 +1,4 @@
-Ext.define('SCD.model.Usuario',{
+Ext.define('Control.model.Usuario',{
 	extend: 'Ext.data.Model',
 	fields: [{
 		name: 'ID', type: 'int'
@@ -9,14 +9,14 @@ Ext.define('SCD.model.Usuario',{
 	}],
 	associations: [{ 
     	type: 'hasOne', 
-    	model: 'SCD.model.Colaborador',
+    	model: 'Control.model.Colaborador',
     	name: 'funcionario', 
     	associationKey: 'funcionario',
     	getterName: 'getFuncionario',
     	setterName: 'setFuncionario'
     },{
     	type: 'hasOne', 
-    	model: 'SCD.model.Perfil',
+    	model: 'Control.model.Perfil',
     	name: 'perfil', 
     	associationKey: 'perfil',
     	getterName: 'getPerfil',

@@ -1,4 +1,4 @@
-﻿Ext.define('SCD.view.usuario.FormSenha',{
+﻿Ext.define('Control.view.usuario.FormSenha',{
 	extend: 'Ext.window.Window',
 	alias: 'widget.usuarioformsenha',
 	id: 'usuarioformsenha',

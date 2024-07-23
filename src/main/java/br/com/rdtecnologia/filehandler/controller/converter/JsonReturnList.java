@@ -18,8 +18,8 @@ public class JsonReturnList<T> {
 
   public JsonReturnList(Page<T> page) {
     super();
-    this.totalCount = (int)page.getTotalElements();
-    this.data = page.getContent();
+    this.totalCount = page == null? 0 : (int) page.getTotalElements();
+    this.data = page == null? null : page.getContent();
   }
 
   public JsonReturnList(List<T> page) {

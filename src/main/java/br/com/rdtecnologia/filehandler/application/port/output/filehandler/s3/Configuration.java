@@ -23,10 +23,12 @@ public class Configuration {
     @Qualifier("s3client")
     public AmazonS3 s3client() {
 
-        return AmazonS3ClientBuilder
-            .standard()
+        InstanceProfileCredentialsProvider credentials =
+                 InstanceProfileCredentialsProvider.createAsyncRefreshingProvider(true);
+
+        return AmazonS3ClientBuilder.standard()
             //.withEndpointConfiguration(new EndpointConfiguration("http://0.0.0.0:4566", bucketRegion))
-            .withRegion(bucketRegion)
+            .withCredentials(credentials)
             .build();
     }
 

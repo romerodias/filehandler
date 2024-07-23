@@ -1,11 +1,15 @@
 package br.com.rdtecnologia.filehandler.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @Entity
 @Table(name = "LOGIN_PAPEL")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Papel {
 
   @Id

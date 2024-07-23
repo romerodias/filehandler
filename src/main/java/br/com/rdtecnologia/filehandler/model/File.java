@@ -28,5 +28,4 @@ public class File {
   private String pathId;
   @Column(name = "created_at")
   private LocalDateTime createdAt;
-
 }

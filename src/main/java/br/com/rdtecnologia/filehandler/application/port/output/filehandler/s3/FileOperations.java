@@ -3,6 +3,7 @@ package br.com.rdtecnologia.filehandler.application.port.output.filehandler.s3;
 import br.com.rdtecnologia.filehandler.application.port.output.filehandler.FileHandlerPort;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @Component
+@Slf4j
 public class FileOperations implements FileHandlerPort {
 
     @Value("${file.operations.s3.bucket.name}")
@@ -25,6 +27,7 @@ public class FileOperations implements FileHandlerPort {
 
     @Override
     public void createFolder(String folderName) {
+        log.info("S3 command: start to create folder: {}", folderName);
         // Create metadata for your folder and set content-length to 0
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(0);

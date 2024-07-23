@@ -37,8 +37,7 @@ public class AuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthentic
         }
         SystemContract systemContract = usuarioService.findByLogin(userName).getContract();
         session.setAttribute("contractId", systemContract.getId());
-        log.info("User [{}] create session",
-            userName);
+        log.info("User [{}] create session with tenant-id: {}", userName, systemContract.getId());
         super.onAuthenticationSuccess(request, response, authentication);
     }
 

@@ -6,13 +6,20 @@ import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnSuccess;
 import br.com.rdtecnologia.filehandler.controller.converter.JsonReturnTree;
 import br.com.rdtecnologia.filehandler.controller.response.DirectoryResponse;
 import br.com.rdtecnologia.filehandler.model.Directory;
+import br.com.rdtecnologia.filehandler.model.DirectoryAccessControl;
+import br.com.rdtecnologia.filehandler.model.SystemContract;
+import br.com.rdtecnologia.filehandler.model.Usuario;
 import br.com.rdtecnologia.filehandler.repository.DirectoryRepository;
 import br.com.rdtecnologia.filehandler.repository.FilesRepository;
+import br.com.rdtecnologia.filehandler.repository.UsuarioRepository;
 import br.com.rdtecnologia.filehandler.service.FileHandlerService;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -34,8 +42,8 @@ public class FileHandlerController extends BaseController {
 
     @Autowired private FileHandlerService fileHandlerService;
     @Value("${base.path}") private String basePath;
-
     @Autowired private DirectoryRepository directoryRepository;
+    @Autowired private UsuarioRepository usuarioRepository;
 
     @PostMapping("/block")
     public void block(
@@ -82,9 +90,9 @@ public class FileHandlerController extends BaseController {
         }
         if(id == null || id.isEmpty()) id = null;
 
-        log.info("Start to create folder with name: {}", dir);
+        log.info("Start to create folder with name: {} for tenant: {}", dir, getUserContractId());
 
-        fileHandlerPort.createFolder(dir);
+        fileHandlerPort.createFolder(getUserContractId() + "/" + dir);
 
         directoryRepository.save(Directory.builder()
             .createdAt(LocalDateTime.now())
@@ -111,7 +119,33 @@ public class FileHandlerController extends BaseController {
 
         log.info("Start to find directories for node: {}", node);
 
-           List<DirectoryResponse> list =  directoryRepository.findByParentAndTenantId(node, getUserContractId()).stream()
+
+        // Retrieve all folders related to user profiles
+        // Filter directory if has id and can read = true show else suppress the folder
+
+        // Retrieve all folders ids
+        Usuario user = usuarioRepository.findByName(getUserSessionDetails().getUsername());
+
+        List<String> directoriesNotAllowd = user.getPerfil().getDirectoryAccessControls()
+            .stream()
+            .filter( d -> d.getCanRead() == false)
+            .map( d -> d.getDirectory().getId())
+            .collect(Collectors.toList());
+
+        log.info("User {} has no access to directories {}", user.getName(), directoriesNotAllowd);
+
+        List<Directory> directories = null;
+
+        if(directoriesNotAllowd != null && !directoriesNotAllowd.isEmpty()) {
+            directories = directoryRepository.findByParentAndTenantIdAndIdNotIn(node,
+                    getUserContractId(),
+                    directoriesNotAllowd
+            );
+        } else {
+            directories = directoryRepository.findByParentAndTenantId(node, getUserContractId());
+        }
+
+       List<DirectoryResponse> list =  directories.stream()
             .map(d ->
                 DirectoryResponse
                     .builder()
@@ -198,7 +232,7 @@ public class FileHandlerController extends BaseController {
 
         log.info("Start to download file to file id :{} and path: {}",fileId, dir.getPath());
 
-        makeDownload(response,fileHandlerPort.load(dir.getPath() + file.getName()).toFile());
+        makeDownload(response,fileHandlerPort.load(getUserContractId() + "/" + dir.getPath() + file.getName()).toFile());
     }
 
 
@@ -215,7 +249,7 @@ public class FileHandlerController extends BaseController {
 
         log.info("Start to delete file:{} and path: {}",file.getName(), dir.getPath());
 
-        fileHandlerPort.deleteFile(dir.getPath() + file.getName());
+        fileHandlerPort.deleteFile(getUserContractId() + "/" + dir.getPath() + file.getName());
 
         filesRepository.delete(filesRepository.findById(fileId).get());
         return new JsonReturnSuccess(fileId);
@@ -231,9 +265,9 @@ public class FileHandlerController extends BaseController {
 
         Directory dir = directoryRepository.findByIdAndTenantId(path, getUserContractId());
 
-        log.info("Uplaod od arquivo: {} to path: {}", file.getOriginalFilename(), dir.getPath());
+        log.info("Uplaod od arquivo: {} to path: {}", file.getOriginalFilename(), getUserContractId() + "/" + dir.getPath());
 
-        fileHandlerPort.storeToPath(file, dir.getPath());
+        fileHandlerPort.storeToPath(file, getUserContractId() + "/" + dir.getPath());
 
         filesRepository.save(br.com.rdtecnologia.filehandler.model.File.builder()
             .name(file.getOriginalFilename())
@@ -242,5 +276,32 @@ public class FileHandlerController extends BaseController {
             .pathId(dir.getId())
             .createdAt(LocalDateTime.now())
             .build());
+    }
+
+
+    @GetMapping("/acl/{directory_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public JsonReturnList<DirectoryAccessControl> getDirectoryACL(@PathVariable("directory_id") String directoryId) {
+
+        Usuario user = usuarioRepository.findByName(getUserSessionDetails().getUsername());
+
+        log.info("Start to find acl for directory: {} for user: {}", directoryId, user.getName());
+
+        return new JsonReturnList<DirectoryAccessControl>(user.getPerfil().getDirectoryAccessControls()
+            .stream()
+            .filter(d -> d.getDirectory().getId().equals(directoryId))
+            .collect(Collectors.toList()));
+    }
+
+
+    private static Specification<Usuario> makeFilter(String userName, String directoryId) {
+        return (root, query, builder) -> {
+            var predicates = new ArrayList<Predicate>();
+            predicates.add(builder.like(root.get("name"), userName));
+            predicates.add(builder.equal(root.join("perfil")
+                .join("directoryAccessControls")
+                .join("directory").get("id"), directoryId));
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }

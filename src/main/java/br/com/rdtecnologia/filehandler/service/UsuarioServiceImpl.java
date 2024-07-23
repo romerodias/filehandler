@@ -3,15 +3,19 @@ package br.com.rdtecnologia.filehandler.service;
 import br.com.rdtecnologia.filehandler.model.Usuario;
 import br.com.rdtecnologia.filehandler.repository.PerfilRepository;
 import br.com.rdtecnologia.filehandler.repository.UsuarioRepository;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -24,13 +28,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
   @Override
   public Page<Usuario> listar(Pageable p, String contractId) {
-//    BaseJpaSpecification<Usuario> spec1 = new BaseJpaSpecification<>(
-//            new SpecSearchCriteria("contract.id", SearchOperation.EQUALITY, contractId));
-//
-//    Specifications<Usuario> specifications = Specifications.where(spec1);
-//
-//    return usuarioRepository.findAll(specifications, p);
-    return null;
+    return usuarioRepository.findAll(makeFilter(contractId), p);
   }
 
   @Override
@@ -106,5 +104,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 //    log.info("Finish to disable a userId: {}", userId);
 //    return usuario;
     return null;
+  }
+
+  private static Specification<Usuario> makeFilter(String tenantId) {
+    return (root, query, builder) -> {
+      var predicates = new ArrayList<Predicate>();
+      predicates.add(builder.equal(root.join("contract").get("id"), tenantId));
+      return builder.and(predicates.toArray(new Predicate[0]));
+    };
   }
 }
