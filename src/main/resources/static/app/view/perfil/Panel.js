@@ -11,7 +11,7 @@ Ext.define('Control.view.perfil.Panel', {
 	},{
 		region: 'center',
 		title: 'Acesso',
-		xtype: 'perfilpapellist',
+		//xtype: 'perfilpapellist',
 		split: true,
 		flex: 3
 	}]

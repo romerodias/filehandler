@@ -120,7 +120,7 @@ Ext.define('Control.controller.Usuario', {
                 var comboFuncionario = form.down("colaboradorcombo");
                 var comboPerfil = form.down("perfilcombo");
                 form.loadRecord(record);
-                comboFuncionario.addRecord(record.raw.funcionario);
+                //comboFuncionario.addRecord(record.raw.funcionario);
                 comboPerfil.addRecord(record.raw.perfil);
                 break;
         }

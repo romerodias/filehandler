@@ -19,18 +19,6 @@
 			xtype: 'hidden',
 			name: 'ID'
 		},{
-			xtype: 'colaboradorcombo',
-			name: 'funcionario',
-			anchor: '100%',
-			listeners: {
-				select: function(a, b, c) {
-					var funcionario = b[0].data;
-					var form = this.up('form');
-					form.getForm().findField('NOME').setValue("pr" + funcionario.IDINFO);
-				}
-			}
-
-		},{
 			xtype: 'perfilcombo',
 			name: 'perfil',
 			anchor: '100%'

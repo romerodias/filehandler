@@ -41,7 +41,7 @@ Ext.require([
 Ext.application({
 	 name: 'Control',
 	 appFolder: 'app',
-	 controllers: ['Login','Main','Usuario'],
+	 controllers: ['Login','Main','Usuario', 'Perfil'],
 	 autoCreateViewport: false,
 	 
 	 launch: function() 

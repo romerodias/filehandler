@@ -8,7 +8,7 @@ Ext.define('Control.store.Usuario',{
 		url: '/usuario/listar',
 		reader: {
 			type: 'json',
-			root: 'rows',
+			root: 'data',
 			successProperty: 'success',
 			totalProperty: 'totalCount'
 		}
