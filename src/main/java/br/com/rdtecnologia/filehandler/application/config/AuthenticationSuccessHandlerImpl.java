@@ -22,19 +22,17 @@ public class AuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthentic
 
     @Override
     public void onAuthenticationSuccess(
-            HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException, ServletException {
+        HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) throws IOException, ServletException {
         String userName = "";
         if(authentication.getPrincipal() instanceof Principal) {
             userName = ((Principal)authentication.getPrincipal()).getName();
-
-        }else {
+        } else {
             userName = ((User)authentication.getPrincipal()).getUsername();
         }
 //        SystemContract systemContract = usuarioService.findByLogin(userName).getContract();
   //      session.setAttribute("contractId", systemContract.getId());
-        log.info("User [{}] create session",
-            userName);
+        log.info("User [{}] create session",userName);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 

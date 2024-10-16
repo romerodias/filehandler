@@ -48,3 +48,9 @@ INSERT IGNORE INTO LOGIN_USUARIO (active, NOME, SENHA, IDPERFIL) VALUES
 (1, 'carolayne', '{noop}pconsul1874', 
   (SELECT ID FROM LOGIN_PERFIL WHERE NOME = 'Administrador')
 );
+
+
+
+# Compile
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
