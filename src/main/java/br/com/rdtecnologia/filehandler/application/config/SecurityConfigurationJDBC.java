@@ -26,11 +26,11 @@
 //    @Autowired
 //	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //      auth
-//        .jdbcAuthentication()
-//        .usersByUsernameQuery(usersQuery)
-//        .authoritiesByUsernameQuery(rolesQuery)
-//        .dataSource(dataSource);
-//    }
+////        .jdbcAuthentication()
+////        .usersByUsernameQuery(usersQuery)
+////        .authoritiesByUsernameQuery(rolesQuery)
+////        .dataSource(dataSource);
+////    }
 //
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

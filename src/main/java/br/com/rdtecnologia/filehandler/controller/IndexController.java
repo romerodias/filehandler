@@ -8,14 +8,14 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class IndexController {
 
-  @RequestMapping(value = {"/"}, method = RequestMethod.GET)
+  @RequestMapping(value = {"/"}, method = {RequestMethod.GET, RequestMethod.POST})
   public ModelAndView index() { return renderModelAndView("index_deploy"); }
 
-  @RequestMapping(value={"/login"}, method = RequestMethod.GET)
+  @RequestMapping(value={"/login"}, method = {RequestMethod.GET, RequestMethod.POST})
   public ModelAndView login() { return renderModelAndView("login"); }
 
-  @RequestMapping(value={"/error"}, method = RequestMethod.GET)
-  public ModelAndView error() { return renderModelAndView("login"); }
+  @RequestMapping(value={"/error"}, method = {RequestMethod.GET, RequestMethod.POST})
+  public ModelAndView error() { return renderModelAndView("index_deploy"); }
 
   private ModelAndView renderModelAndView(String viewName) {
     ModelAndView modelAndView = new ModelAndView();

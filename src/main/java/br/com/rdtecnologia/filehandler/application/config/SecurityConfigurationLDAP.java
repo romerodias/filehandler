@@ -6,12 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -20,27 +26,53 @@ public class SecurityConfigurationLDAP {
 
     @Value("${auth.mode.ldap.user-dn-patterns}") private String userDnPatterns;
     @Value("${auth.mode.ldap.user-search-base}") private String userSearchBase;
-    @Value("${auth.mode.ldap.url}") private String url;
+    @Value("${auth.mode.ldap.user-search-filter}") private String userSearchFilter;
 
-//	@Autowired AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
+    @Value("${auth.mode.ldap.group-search-filter}") private String groupSearchFilter;
+    @Value("${auth.mode.ldap.group-search-base}") private String groupSearchBase;
+	@Value("${auth.mode.ldap.url}") private String url;
+
+	@Autowired private DataSource dataSource;
+    @Value("${spring.queries.users-query}") private String usersQuery;
+    @Value("${spring.queries.roles-query}") private String rolesQuery;
+
+	@Bean
+	public LdapAuthoritiesPopulator ldapAuthoritiesPopulator() {
+		return (userData, username) -> {
+			if (userData.getDn().toString().contains(LDAP_GROUP_BASE)) {
+				return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+			} else {
+				throw new BadCredentialsException("Usuário não pertence ao grupo necessário para login.");
+			}
+		};
+	}
 
 	@Autowired
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		log.info("Start LDAP Authentication for userDn: {}, userSearch: {}, urL: {}", userDnPatterns, userSearchBase, url);
 		auth
 			.ldapAuthentication()
-				.userDnPatterns(userDnPatterns)
-				//.groupSearchBase(userSearchBase)
-				.userSearchBase(userSearchBase)
-				.contextSource()
-					.url(url);
-//					.and()
-//				.passwordCompare()
-//						.passwordEncoder(new BCryptPasswordEncoder())
-//						.passwordAttribute("userPassword");
+			.userDnPatterns("uid={0},ou=usuarios")
+			.ldapAuthoritiesPopulator((userData, username) -> {
+				log.info("Ldap User: {}",userData);
+				if (userData.toString().contains("businessCategory=ged")) {
+					return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+				} else {
+					log.error("Lpda user ({}) doest not have property businessCategory=ged", username);
+					throw new BadCredentialsException("Usuário não pertence ao grupo necessário para login.");
+				}
+            })
+			.contextSource()
+			.url(url);
 	}
 
-//
+	@Bean
+	public DefaultSpringSecurityContextSource contextSourceLDAP() {
+		return new DefaultSpringSecurityContextSource(url);
+	}
+
+	private static final String LDAP_GROUP_BASE = "businessCategory=ged";
+
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,7 +81,7 @@ public class SecurityConfigurationLDAP {
 				.authorizeHttpRequests((requests) -> {
 					try {
 						requests
-							.requestMatchers(AUTH_WHITELIST).permitAll()
+						.requestMatchers(AUTH_WHITELIST).permitAll()
 						.anyRequest().authenticated()
 						.and()
 						//.and().csrf().disable()

@@ -54,3 +54,38 @@ INSERT IGNORE INTO LOGIN_USUARIO (active, NOME, SENHA, IDPERFIL) VALUES
 # Compile
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+
+
+BASE_PATH=/home/romero/
+DB_PASSWORD=sainfo123
+DB_URL=jdbc:mysql://127.0.0.1:3306/rdged
+DB_USERNAME=root
+LDAP_DN_PATTERNS=uid\={0},ou\=usuarios
+LDAP_SEARCH_BASE=dc\=id
+LDAP_URL=ldap://10.10.10.29:389/dc\=id
+
+java -jar filehandler-0.1.2.jar
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+~                                                                                                                                                                                                                                          
+-- INSERÇÃO --                                                                                                                                                                                                           1,29         Tudo
